@@ -1,42 +1,58 @@
-var s = "etaoinshrdlcumwfgypbvkxjqz";
+var fr = " etaoinshrdlcumwfgypbvkxjqz";
 var lastEngLow = 122;
-var firsEngtLow = 97;
+var firstEngtLow = 97;
 $("#text").val("");
+
 function shift(shiftNumber) {
-   text = $("#text").val();
-   text = text.toLowerCase();
+    var text = $("#text").val();
+    text = text.toLowerCase();
     for (var i = 0; i < text.length; i++) {
 //        console.log(text.charCodeAt(i));
-//        if (text.charCodeAt(i)>122 || text.charCodeAt(i)<97) {
-//            alert("it's imposable");
-//            return;
-//        }
+//         if (text.charCodeAt(i) > 122 || text.charCodeAt(i) < 97) {
+//             if (isPunctuation(text[i])) {
+//                 alert("it's imposable");
+//                 return;
+//
+//
+//             }
+//         }
     }
-    var  newText = "";
+    var newText = "";
     for (var i = 0; i < text.length; i++) {
-        if(isPunctuation(text.charAt(i))) {
-           newText = newText + text.charAt(i);
+        if (isPunctuation(text.charAt(i))||text[i]==" ") {
+            newText = newText + text.charAt(i);
         } else {
-          
-          shiftNumber = shiftNumber%26;
-          var newChar = +text.charCodeAt(i)+parseInt(shiftNumber);
-          console.log(newChar);
-            if (newChar>122) {
-                console.log(+shiftNumber+97);
-                newText = newText +  String.fromCharCode(+shiftNumber+96);
-            } else if (newChar<97) {
-               newText = newText + String.fromCharCode(123+shiftNumber);
-            } else {   
-                newText = newText + String.fromCharCode(+text.charCodeAt(i)+parseInt(shiftNumber));
-            }  
-        }  
+            newText = newText + String.fromCharCode(cycleShift(lastEngLow, firstEngtLow, +text.charCodeAt(i), +shiftNumber));
+        }
     }
+
+    function cycleShift(max, min, current, shift) {
+        var direct = 0;
+        if (shift > 0) {
+            direct = 1;
+        } else {
+            direct = -1;
+        }
+
+        shift = Math.abs(shift);
+        for (let i = 0; i < shift; i++) {
+            current += direct;
+            if (current > max) {
+                current = min;
+            } else if (current < min) {
+                current = max;
+            }
+        }
+        return current;
+    }
+
+
     console.log(newText);
-  $("#text").val(newText);
+    $("#text").val(newText);
 }
 
 function isPunctuation(char) {
-    var puncts = ".,:!?";
+    var puncts = "*0123456789\r\n_—`><«»“”’↵{}[]().,:!?'-;~/\\\"";
     for (var i = 0; i < puncts.length; i++) {
         if (char === puncts.charAt(i)) {
             return true;
@@ -45,10 +61,48 @@ function isPunctuation(char) {
     return false;
 }
 
-$("#button").on("click", function(){
-  shift($("#shiftNumber").val());
+$("#button").on("click", function () {
+    shift($("#shiftNumber").val());
 });
 
-function Decodyng(text) {
-   
+$("#decryptButton").on("click", function () {
+    var text = $("#text").val();
+    text = text.toLowerCase();
+    decrypting(text);
+});
+
+function decrypting(text) {
+    var stat = {};
+    for (var i = 0; i < text.length; i++) {
+        if (isPunctuation(text[i])) {
+            continue;
+        }
+        var ch = text[i];
+        if (ch in stat) {
+            stat[ch]++;
+        } else {
+            stat[ch] = 1;
+        }
+    }
+
+
+    let newText = "";
+    let sortStat = sortingStat(stat);
+    let count = 0;
+    for (let i = 0; i < sortable.length; i++) {
+        text = text.replace(new RegExp(sortable[i], 'g'), fr[count]);
+        count++;
+    }
+
+    $("#text").val(text);
+    console.log(stat);
+
+}
+
+function sortingStat(stat) {
+    sortable = Object.keys(stat).sort(function (a, b) {
+        return -(stat[a] - stat[b])
+    })
+    console.log(sortable);
+    return sortable;
 }
