@@ -17,9 +17,11 @@ function shift(shiftNumber) {
 //             }
 //         }
     }
+
+
     var newText = "";
     for (var i = 0; i < text.length; i++) {
-        if (isPunctuation(text.charAt(i))||text[i]==" ") {
+        if (isPunctuation(text.charAt(i)) || text[i] == " ") {
             newText = newText + text.charAt(i);
         } else {
             newText = newText + String.fromCharCode(cycleShift(lastEngLow, firstEngtLow, +text.charCodeAt(i), +shiftNumber));
@@ -61,15 +63,15 @@ function isPunctuation(char) {
     return false;
 }
 
-$("#button").on("click", function () {
-    shift($("#shiftNumber").val());
-});
+// $("#button").on("click", function () {
+//     shift($("#shiftNumber").val());
+// });
 
-$("#decryptButton").on("click", function () {
-    var text = $("#text").val();
-    text = text.toLowerCase();
-    decrypting(text);
-});
+// $("#decryptButton").on("click", function () {
+//     var text = $("#text").val();
+//     text = text.toLowerCase();
+//     decrypting(text);
+// });
 
 function decrypting(text) {
     var stat = {};
@@ -105,4 +107,22 @@ function sortingStat(stat) {
     })
     console.log(sortable);
     return sortable;
+}
+
+function findBigrams(text) {
+    let stat = {};
+    for (let i = 0; i < text.length - 1; i++) {
+        if (isPunctuation(text[i]) || isPunctuation(text[i + 1])) {
+            continue;
+        }
+
+        let ch = text[i];
+        let ch2 = text[i + 1];
+        if (ch + ch2 in stat) {
+            stat[ch + ch2]++;
+        } else {
+            stat[ch + ch2] = 1;
+        }
+    }
+    return stat;
 }
